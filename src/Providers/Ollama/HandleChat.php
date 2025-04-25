@@ -27,6 +27,16 @@ trait HandleChat
             $json['tools'] = $this->generateToolsPayload();
         }
 
+        foreach ($json['tools'] as $idx => $tool) {
+            if (!array_key_exists('parameters', $tool['function'])) {
+                $json['tools'][$idx]['function']['parameters'] = [
+                    'type' => 'object',
+                    'properties' => new \stdClass(),
+                    'required' => [],
+                ];
+            }
+        }
+
         try {
             $response = $this->client->post('chat', compact('json'));
         } catch (\GuzzleHttp\Exception\ClientException $ex) {
